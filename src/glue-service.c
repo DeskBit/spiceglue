@@ -373,6 +373,10 @@ int16_t SpiceGlibGlue_isConnected() {
     return (connections > 0);
 }
 
+int16_t SpiceGlibGlue_getNumberOfChannels() {
+    return connections;
+}
+
 /* GSourcefunc */
 static gboolean sendPowerEvent1(int16_t powerEvent)
 {
