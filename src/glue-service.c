@@ -376,37 +376,3 @@ int16_t SpiceGlibGlue_isConnected() {
 int16_t SpiceGlibGlue_getNumberOfChannels() {
     return connections;
 }
-
-/* GSourcefunc */
-static gboolean sendPowerEvent1(int16_t powerEvent)
-{
-    SpiceDisplay *display;
-    SpiceDisplayPrivate *d;
-    
-    display = global_display;
-    if (global_display == NULL) {
-        return -1;
-    }
-
-    d = SPICE_DISPLAY_GET_PRIVATE(display);
-    if (d->data == NULL) {
-        return -1;
-    }
-    
-    spice_main_power_event_request(d->main, powerEvent);
-	return FALSE;
-}
-
-/** 
- * Sends a power event to the machine connected by SPICE.
- * Params: 
- *  IN: powerEvent. One of the values of SpicePowerEvent defined 
- *     in spice-protocol enums.h
- **/
-void SpiceGlibGlue_SendPowerEvent(int16_t powerEvent) {
-    g_timeout_add_full(G_PRIORITY_HIGH, 0,
-                       sendPowerEvent1,
-                       powerEvent, NULL);
-}
-
-
