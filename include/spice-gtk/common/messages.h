@@ -38,8 +38,12 @@
 #include <spice/protocol.h>
 #include <spice/macros.h>
 
-#ifdef USE_SMARTCARD
+#ifdef USE_SMARTCARD_012
 #include <vscard_common.h>
+#else
+#ifdef USE_SMARTCARD
+#include <libcacard.h>
+#endif
 #endif
 
 #include "draw.h"
@@ -50,6 +54,13 @@ typedef struct SpiceMsgData {
     uint32_t data_size;
     uint8_t data[0];
 } SpiceMsgData;
+
+typedef struct SpiceMsgCompressedData {
+    uint8_t type;
+    uint32_t uncompressed_size;
+    uint32_t compressed_size;
+    uint8_t *compressed_data;
+} SpiceMsgCompressedData;
 
 typedef struct SpiceMsgEmpty {
     uint8_t padding;
@@ -375,6 +386,9 @@ typedef struct SpiceMsgcDisplayStreamReport {
     uint32_t audio_delay;
 } SpiceMsgcDisplayStreamReport;
 
+typedef struct SpiceMsgcDisplayGlDrawDone {
+} SpiceMsgcDisplayGlDrawDone;
+
 typedef struct SpiceMsgCursorInit {
     SpicePoint16 position;
     uint16_t trail_length;
@@ -629,6 +643,31 @@ typedef struct SpiceMsgPortEvent {
 typedef struct SpiceMsgcPortEvent {
     uint8_t event;
 } SpiceMsgcPortEvent;
+
+typedef struct SpiceMsgcDisplayPreferredVideoCodecType {
+    uint8_t num_of_codecs;
+    uint8_t codecs[0];
+} SpiceMsgcDisplayPreferredVideoCodecType;
+
+typedef struct SpiceMsgcDisplayPreferredCompression {
+    uint8_t image_compression;
+} SpiceMsgcDisplayPreferredCompression;
+
+typedef struct SpiceMsgDisplayGlScanoutUnix {
+    int drm_dma_buf_fd;
+    uint32_t width;
+    uint32_t height;
+    uint32_t stride;
+    uint32_t drm_fourcc_format;
+    uint32_t flags;
+} SpiceMsgDisplayGlScanoutUnix;
+
+typedef struct SpiceMsgDisplayGlDraw {
+    uint32_t x;
+    uint32_t y;
+    uint32_t w;
+    uint32_t h;
+} SpiceMsgDisplayGlDraw;
 
 SPICE_END_DECLS
 

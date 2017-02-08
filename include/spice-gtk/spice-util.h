@@ -40,22 +40,14 @@ gchar* spice_uuid_to_string(const guint8 uuid[16]);
 
 #define SPICE_RESERVED_PADDING (10 * sizeof(void*))
 
-/* need to be in a public header, glib-compat.h is private */
-#ifndef SPICE_GNUC_DEPRECATED_FOR
+/* need to be in a public header */
+#ifndef SPICE_DEPRECATED_FOR
 #if    __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)
-#define SPICE_GNUC_DEPRECATED_FOR(f)                        \
+#define SPICE_DEPRECATED_FOR(f)                        \
   __attribute__((deprecated("Use " #f " instead")))
 #else
-#define SPICE_GNUC_DEPRECATED_FOR(f)        G_GNUC_DEPRECATED
+#define SPICE_DEPRECATED_FOR(f)        G_GNUC_DEPRECATED
 #endif /* __GNUC__ */
-#endif
-
-#ifndef SPICE_NO_DEPRECATED
-#define SPICE_DEPRECATED_FOR(f)  SPICE_GNUC_DEPRECATED_FOR(f)
-#define SPICE_DEPRECATED  G_GNUC_DEPRECATED
-#else
-#define SPICE_DEPRECATED_FOR(f)
-#define SPICE_DEPRECATED
 #endif
 
 G_END_DECLS

@@ -1,6 +1,5 @@
-/* -*- Mode: C; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
-   Copyright (C) 2009 Red Hat, Inc.
+   Copyright (C) 2015 Red Hat, Inc.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -15,22 +14,19 @@
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef __SPICE_CLIENT_GTK_H__
+#define __SPICE_CLIENT_GTK_H__
 
-#ifndef _H_GLCTX
-#define _H_GLCTX
+#include "spice-client.h"
 
-#include <spice/macros.h>
+#define __SPICE_CLIENT_GTK_H_INSIDE__
 
-SPICE_BEGIN_DECLS
+#include "spice-grabsequence.h"
+#include "spice-gtk-session.h"
+#include "spice-widget-enums.h"
+#include "spice-widget.h"
+#include "usb-device-widget.h"
 
-typedef struct OGLCtx OGLCtx;
+#undef __SPICE_CLIENT_GTK_H_INSIDE__
 
-const char *oglctx_type_str(OGLCtx *ctx);
-void oglctx_make_current(OGLCtx *ctx);
-OGLCtx *pbuf_create(int width, int heigth);
-OGLCtx *pixmap_create(int width, int heigth);
-void oglctx_destroy(OGLCtx *ctx);
-
-SPICE_END_DECLS
-
-#endif
+#endif /* __SPICE_CLIENT_GTK_H__ */

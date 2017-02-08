@@ -5,6 +5,7 @@ CLIENT_MARSHALLERS =				\
 	generated_client_demarshallers.c	\
 	generated_client_demarshallers1.c	\
 	generated_client_marshallers.c		\
+	generated_client_marshallers.h		\
 	generated_client_marshallers1.c		\
 	$(NULL)
 
@@ -14,7 +15,7 @@ SERVER_MARSHALLERS =				\
 	generated_server_marshallers.h		\
 	$(NULL)
 
-BUILT_SOURCES = $(CLIENT_MARSHALLERS) $(SERVER_MARSHALLERS) $(top_srcdir)/spice-protocol/spice/enums.h
+BUILT_SOURCES = $(CLIENT_MARSHALLERS) $(SERVER_MARSHALLERS)
 
 noinst_LTLIBRARIES = libspice-common.la libspice-common-server.la libspice-common-client.la
 libspice_common_la_SOURCES =		\
@@ -79,18 +80,9 @@ libspice_common_server_la_SOURCES =		\
 
 libspice_common_server_la_CFLAGS = -DFIXME_SERVER_SMARTCARD
 
-if SUPPORT_GL
-libspice_common_la_SOURCES +=		\
-	gl_utils.h			\
-	glc.c				\
-	glc.h				\
-	ogl_ctx.c			\
-	ogl_ctx.h			\
-	$(NULL)
-endif
-
 AM_CPPFLAGS =				\
 	-I$(top_srcdir)			\
+	-I$(top_builddir)		\
 	$(SPICE_COMMON_CFLAGS)		\
 	$(PROTOCOL_CFLAGS)		\
 	$(NULL)
@@ -99,10 +91,10 @@ libspice_common_la_LIBADD =				\
 	$(SPICE_COMMON_LIBS)				\
 	$(NULL)
 
-MARSHALLERS_DEPS =					\
-	$(top_srcdir)/python_modules/__init__.py	\
+MARSHALLERS_DEPS =							\
+	$(top_srcdir)/python_modules/__init__.py		\
 	$(top_srcdir)/python_modules/codegen.py		\
-	$(top_srcdir)/python_modules/demarshal.py	\
+	$(top_srcdir)/python_modules/demarshal.py		\
 	$(top_srcdir)/python_modules/marshal.py		\
 	$(top_srcdir)/python_modules/ptypes.py		\
 	$(top_srcdir)/python_modules/spice_parser.py	\
@@ -117,8 +109,11 @@ generated_client_demarshallers.c: $(top_srcdir)/spice.proto $(MARSHALLERS_DEPS)
 generated_client_demarshallers1.c: $(top_srcdir)/spice1.proto $(MARSHALLERS_DEPS)
 	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-demarshallers --client --include common/messages.h --prefix 1 --ptrsize 8 $< $@ >/dev/null
 
+generated_client_marshallers.h: $(top_srcdir)/spice.proto $(MARSHALLERS_DEPS)
+	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-marshallers -P --client --include common/messages.h -H $< $@ >/dev/null
+
 generated_client_marshallers.c: $(top_srcdir)/spice.proto $(MARSHALLERS_DEPS)
-	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-marshallers -P --include common/messages.h --include client_marshallers.h --client $< $@ >/dev/null
+	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-marshallers -P --include client_marshallers.h --client $< $@ >/dev/null
 
 generated_client_marshallers1.c: $(top_srcdir)/spice1.proto $(MARSHALLERS_DEPS)
 	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-marshallers -P --include common/messages.h --include client_marshallers.h --client --prefix 1 --ptrsize 8 $< $@ >/dev/null
@@ -133,12 +128,6 @@ generated_server_marshallers.c: $(top_srcdir)/spice.proto $(MARSHALLERS_DEPS)
 generated_server_marshallers.h: $(top_srcdir)/spice.proto $(MARSHALLERS_DEPS)
 	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-marshallers $(STRUCTS) --server --include common/messages.h -H $< $@ >/dev/null
 
-# this is going to upset automake distcheck, since we try to write to
-# readonly srcdir. To limit the fail chances, rebuild automatically
-# enums.h only if the spice.proto has changed.
-$(top_srcdir)/spice-protocol/spice/enums.h: $(top_srcdir)/spice.proto # $(MARSHALLERS_DEPS)
-	$(AM_V_GEN)$(PYTHON) $(top_srcdir)/spice_codegen.py --generate-enums $< $@ >/dev/null
-
 EXTRA_DIST =				\
 	$(CLIENT_MARSHALLERS)		\
 	$(SERVER_MARSHALLERS)		\
@@ -146,8 +135,6 @@ EXTRA_DIST =				\
 	canvas_base.h			\
 	gdi_canvas.c			\
 	gdi_canvas.h			\
-	gl_canvas.c			\
-	gl_canvas.h			\
 	lz_compress_tmpl.c		\
 	lz_decompress_tmpl.c		\
 	quic_family_tmpl.c		\

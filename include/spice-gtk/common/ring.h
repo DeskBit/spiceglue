@@ -19,7 +19,6 @@
 #ifndef _H_RING2
 #define _H_RING2
 
-#include <spice/macros.h>
 #include "spice_common.h"
 
 SPICE_BEGIN_DECLS
@@ -75,7 +74,7 @@ static inline void __ring_remove(RingItem *item)
 {
     item->next->prev = item->prev;
     item->prev->next = item->next;
-    item->prev = item->next = 0;
+    item->prev = item->next = NULL;
 }
 
 static inline void ring_remove(RingItem *item)
@@ -156,9 +155,7 @@ static inline unsigned int ring_get_length(Ring *ring)
     RingItem *i;
     unsigned int ret = 0;
 
-    for (i = ring_get_head(ring);
-         i != NULL;
-         i = ring_next(ring, i))
+    RING_FOREACH(i, ring)
         ret++;
 
     return ret;

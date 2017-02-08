@@ -44,6 +44,19 @@ G_BEGIN_DECLS
 #define SPICE_DISPLAY_GET_PRIVATE(obj)                                  \
     (G_TYPE_INSTANCE_GET_PRIVATE((obj), SPICE_TYPE_DISPLAY, SpiceDisplayPrivate))
 
+#if GLIB_CHECK_VERSION(2,32,0)
+#define STATIC_MUTEX            GMutex
+#define STATIC_MUTEX_INIT(m)    g_mutex_init(&(m))
+#define STATIC_MUTEX_CLEAR(m)   g_mutex_clear(&(m))
+#define STATIC_MUTEX_LOCK(m)    g_mutex_lock(&(m))
+#define STATIC_MUTEX_UNLOCK(m)  g_mutex_unlock(&(m))
+#else
+#define STATIC_MUTEX            GStaticMutex
+#define STATIC_MUTEX_INIT(m)    g_static_mutex_init(&(m))
+#define STATIC_MUTEX_CLEAR(m)   g_static_mutex_free(&(m))
+#define STATIC_MUTEX_LOCK(m)    g_static_mutex_lock(&(m))
+#define STATIC_MUTEX_UNLOCK(m)  g_static_mutex_unlock(&(m))
+#endif
 
 struct _SpiceDisplayPrivate {
     gint                    channel_id;
