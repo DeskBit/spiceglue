@@ -373,6 +373,3 @@ int16_t SpiceGlibGlue_isConnected() {
     return (connections > 0);
 }
 
-int16_t SpiceGlibGlue_getNumberOfChannels() {
-    return connections;
-}
